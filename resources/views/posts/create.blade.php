@@ -5,27 +5,9 @@
 @section('content')
     <form action="{{ route('posts.store') }}" method="POST">
         @csrf
-        <div>
-            <input type="text" name="title"/>
-        </div>
-
-        @error('title')
-            <div>{{ $message }}</div>
-        @enderror
-        <div>
-            <textarea name="content"></textarea>
-        </div>
-        @if($errors->any())
-            <div>
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        <div>
-            <input type="submit" value="Creat"/>
+        @include('posts.partials.form')
+        <div class="d-flex">
+            <input  type="submit" value="Creat" class="btn btn-primary btn-block w-100 my-3" />
         </div>
     </form>
 
