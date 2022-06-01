@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('blog_posts', function (Blueprint $table) {
-            $table->id();
+        Schema::create('authors', function (Blueprint $table) {
+            $table->increments('id');
             $table->timestamps();
-            $table->string('title')->default('');
-            $table->text('content')->default('');
-
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('blog_posts');
+        Schema::dropIfExists('authors');
     }
 };

@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('blog_posts', function (Blueprint $table) {
-            $table->id();
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->increments('id');
             $table->timestamps();
-            $table->string('title')->default('');
-            $table->text('content')->default('');
 
+            $table->unsignedInteger('author_id')->unique();
+            $table->foreign('author_id')->references('id')->on('authors');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('blog_posts');
+        Schema::dropIfExists('profiles');
     }
 };
