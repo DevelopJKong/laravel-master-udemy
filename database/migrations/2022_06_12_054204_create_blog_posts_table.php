@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
+class CreateBlogpostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('blog_posts', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->timestamps();
-            $table->string('title')->default('');
-            $table->text('content')->default('');
-
         });
     }
 
@@ -31,4 +28,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('blog_posts');
     }
-};
+}
