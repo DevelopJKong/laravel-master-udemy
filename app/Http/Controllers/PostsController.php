@@ -6,24 +6,10 @@ use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
 
+//use Illuminate\Support\Facades\DB;
+
 class PostsController extends Controller
 {
-
-    private $posts = [
-        1 => [
-            'title' => 'Intro to Laravel',
-            'content' => 'This is a short intro to Laravel',
-            'is_new' => true,
-            'has_comments' => true
-        ],
-        2 => [
-            'title' => 'Intro to PHP',
-            'content' => 'This is a short intro to PHP',
-            'is_new' => false,
-            'has_comments' => false
-        ]
-    ];
-
     /**
      * Display a listing of the resource.
      *
@@ -31,8 +17,21 @@ class PostsController extends Controller
      */
     public function index()
     {
-        //
-        return view('posts.index', ['posts' => BlogPost::orderBy('created_at', 'desc')->take(10)->get()]);
+        /*
+                DB::connection()->enableQueryLog(); // 어떤 api인지 또 정확하게 알아두어야 할거 같다
+
+                $posts = BlogPost::with('comment')->get();
+                foreach($posts as $post) {
+                    foreach($post->comments as $comment) {
+                        echo $comment->content;
+                    }
+                }
+
+                dd(DB::getQueryLog());
+        */
+
+        //return view('posts.index', ['posts' => BlogPost::orderBy('created_at', 'desc')->take(10)->get()]);
+        return view('posts.index', ['posts' => BlogPost::withCount('comments')->get()]);
     }
 
     /**
@@ -72,7 +71,7 @@ class PostsController extends Controller
     public function show($id)
     {
         //abort_if(!isset($this->posts[$id]),404);
-        return view('posts.show', ['post' => BlogPost::findOrFail($id)]);
+        return view('posts.show', ['post' => BlogPost::with('comments')->findOrFail($id)]);
     }
 
     /**
@@ -83,7 +82,7 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        return view('posts.edit',['post'=>BlogPost::findOrFail($id)]);
+        return view('posts.edit', ['post' => BlogPost::findOrFail($id)]);
     }
 
     /**
@@ -100,9 +99,9 @@ class PostsController extends Controller
         $post->fill($validated);
         $post->save();
 
-        $request->session()->flash('status','Blog post was updated!');
+        $request->session()->flash('status', 'Blog post was updated!');
 
-        return redirect()->route('posts.show',['post' => $post->id ]);
+        return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
     /**
@@ -116,7 +115,7 @@ class PostsController extends Controller
         $post = BlogPost::findOrFail($id);
         $post->delete();
 
-        session()->flash('status','Blog post was delete!');
+        session()->flash('status', 'Blog post was delete!');
 
         return redirect()->route('posts.index');
     }

@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\BlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use App\Models\Comment;
+use Database\Factories\CommentFactory;
+use Database\Factories\BlogPostFactory;
 //use Illuminate\Foundation\Testing\WithFaker; 이거는 뭔데 지웠지?
 use Tests\TestCase;
 
@@ -19,7 +21,7 @@ class PostTest extends TestCase
         $response->assertSeeText('No posts found!');
     }
 
-    public function testSee1BlogPostWhenThereIs1()
+    public function testSee1BlogPostWhenThereIs1WithNoComments()
     {
         // Arrage
         $post = $this->createDummyBlogPost();
@@ -29,10 +31,26 @@ class PostTest extends TestCase
 
         // Assert
         $response->assertSeeText('New title');
+        $response->assertSeeText('No comments yet');
 
         $this->assertDatabaseHas('blog_posts', [
             'title' => 'New title'
         ]);
+    }
+
+    public function testSee1BlogPostWithComments()
+    {
+        //Arrange [given]
+        $post = $this->createDummyBlogPost();
+        $factory = new CommentFactory();
+
+        $factory->create([
+            'blog_post_id' => $post->id
+        ]);
+        //Act [when]
+        $response = $this->get('/posts');
+        //Assert [then]
+        $response->assertSeeText(' 1 comments');
     }
 
     public function testStoreValid()
@@ -112,5 +130,10 @@ class PostTest extends TestCase
         $post->content = 'Content of the blog post';
         $post->save();
         return $post;
+
+
+//        $factory = new BlogPostFactory();
+//        return $factory->state('new-title')->create();
+
     }
 }
